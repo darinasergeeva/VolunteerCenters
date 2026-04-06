@@ -21,4 +21,4 @@ public partial class VolunteerRegistration
 
     public virtual User User { get; set; } = null!;
 }
-}
+

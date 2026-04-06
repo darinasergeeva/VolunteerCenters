@@ -71,19 +71,19 @@ public partial class BdVolunteerCentersContext : DbContext
             entity.Property(e => e.Place).HasColumnName("place");
             entity.Property(e => e.VolunteersNeeded).HasColumnName("volunteers_needed");
 
-            entity.HasOne(d => d.IdCategoriNavigation).WithMany(p => p.Doings)
+            entity.HasOne(d => d.Category).WithMany(p => p.Doings)
                 .HasForeignKey(d => d.IdCategori)
                 .HasConstraintName("doings_id_categori_fkey");
 
-            entity.HasOne(d => d.IdEventNavigation).WithMany(p => p.Doings)
+            entity.HasOne(d => d.Event).WithMany(p => p.Doings)
                 .HasForeignKey(d => d.IdEvent)
                 .HasConstraintName("doings_id_event_fkey");
 
-            entity.HasOne(d => d.IdEventStatusNavigation).WithMany(p => p.Doings)
+            entity.HasOne(d => d.EventStatus).WithMany(p => p.Doings)
                 .HasForeignKey(d => d.IdEventStatus)
                 .HasConstraintName("doings_id_event_status_fkey");
 
-            entity.HasOne(d => d.IdUserNavigation).WithMany(p => p.Doings)
+            entity.HasOne(d => d.User).WithMany(p => p.Doings)
                 .HasForeignKey(d => d.IdUser)
                 .HasConstraintName("doings_id_user_fkey");
         });
@@ -143,7 +143,7 @@ public partial class BdVolunteerCentersContext : DbContext
             entity.Property(e => e.Login).HasColumnName("login");
             entity.Property(e => e.Password).HasColumnName("password");
 
-            entity.HasOne(d => d.IdRoleNavigation).WithMany(p => p.Users)
+            entity.HasOne(d => d.Role).WithMany(p => p.Users)
                 .HasForeignKey(d => d.IdRole)
                 .HasConstraintName("users_id_role_fkey");
         });
@@ -166,15 +166,15 @@ public partial class BdVolunteerCentersContext : DbContext
                 .HasColumnName("id_user");
             entity.Property(e => e.RegistrationDate).HasColumnName("registration_date");
 
-            entity.HasOne(d => d.IdEventNavigation).WithMany(p => p.VolunteerRegistrations)
+            entity.HasOne(d => d.Event).WithMany(p => p.VolunteerRegistrations)
                 .HasForeignKey(d => d.IdEvent)
                 .HasConstraintName("volunteer_registrations_id_event_fkey");
 
-            entity.HasOne(d => d.IdRegistrationStatusNavigation).WithMany(p => p.VolunteerRegistrations)
+            entity.HasOne(d => d.RegistrationStatus).WithMany(p => p.VolunteerRegistrations)
                 .HasForeignKey(d => d.IdRegistrationStatus)
                 .HasConstraintName("volunteer_registrations_id_volunteer_registration_fkey");
 
-            entity.HasOne(d => d.IdUserNavigation).WithMany(p => p.VolunteerRegistrations)
+            entity.HasOne(d => d.User).WithMany(p => p.VolunteerRegistrations)
                 .HasForeignKey(d => d.IdUser)
                 .HasConstraintName("volunteer_registrations_id_user_fkey");
         });
