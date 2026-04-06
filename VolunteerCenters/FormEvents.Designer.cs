@@ -82,6 +82,7 @@
             btnEdit.TabStop = false;
             btnEdit.Text = "Редактировать";
             btnEdit.UseVisualStyleBackColor = false;
+            btnEdit.Click += btnEdit_Click;
             // 
             // btnDelete
             // 

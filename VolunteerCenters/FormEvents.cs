@@ -44,6 +44,9 @@ namespace VolunteerCenters
             dgvEvent.RowTemplate.Height = 35;
             dgvEvent.DefaultCellStyle.Font = new Font("Times New Roman", 10);
             dgvEvent.ColumnHeadersDefaultCellStyle.Font = new Font("Times New Roman", 11, FontStyle.Bold);
+            dgvEvent.AllowUserToAddRows = false;
+            dgvEvent.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dgvEvent.MultiSelect = false;
         }
         private void LoadEvents()
         {
@@ -86,6 +89,8 @@ namespace VolunteerCenters
                         int rowIndex = dgvEvent.Rows.Add();
                         var row = dgvEvent.Rows[rowIndex];
 
+                        row.Tag = doing.Id;
+
                         row.Cells["colName"].Value = doing.Event?.NameEvent ?? "—";
                         row.Cells["colCategory"].Value = doing.Category?.NameCategori ?? "—";
                         row.Cells["colDate"].Value = doing.DateDoing.ToString("dd.MM.yyyy");
@@ -111,17 +116,14 @@ namespace VolunteerCenters
 
         private void ApplyRowStyle(DataGridViewRow row, string status, int freeSpots)
         {
-            // Статус "Отменено" — светло-розовый 
             if (status == "Отменено")
             {
                 row.DefaultCellStyle.BackColor = ColorTranslator.FromHtml("#FFB6C1");
             }
-            // Статус "Завершено" 
             else if (status == "Завершено")
             {
                 row.DefaultCellStyle.BackColor = ColorTranslator.FromHtml("#E0E0E0");
             }
-            // Статус "Запланировано" и осталось менее 3 свободных мест 
             else if (status == "Запланировано" && freeSpots < 3 && freeSpots > 0)
             {
                 row.DefaultCellStyle.BackColor = ColorTranslator.FromHtml("#FFE5B4");
@@ -140,9 +142,83 @@ namespace VolunteerCenters
             {
                 if (formEdit.ShowDialog() == DialogResult.OK)
                 {
-                    LoadEvents(); 
+                    LoadEvents();
                 }
             }
+        }
+
+        private void btnEdit_Click(object sender, EventArgs e)
+        {
+            // Проверка, что выбран хотя бы один ряд
+            if (dgvEvent.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("Выберите мероприятие для редактирования!", "Внимание",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            // Получаем ID выбранного мероприятия
+            int selectedId = GetSelectedDoingId();
+
+            if (selectedId == -1)
+            {
+                MessageBox.Show("Не удалось определить ID мероприятия!\n" +
+                    "Проверьте, что колонка colId существует и содержит данные.",
+                    "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            try
+            {
+                using (var db = new BdVolunteerCentersContext())
+                {
+                    var doing = db.Doings
+                        .Include(d => d.Event)
+                        .Include(d => d.Category)
+                        .Include(d => d.EventStatus)
+                        .Include(d => d.User)
+                        .FirstOrDefault(d => d.Id == selectedId);
+
+                    if (doing != null)
+                    {
+                        using (var formEdit = new FormEventEdit(doing))
+                        {
+                            if (formEdit.ShowDialog() == DialogResult.OK)
+                            {
+                                LoadEvents(); 
+                                MessageBox.Show("Данные обновлены!", "Успех",
+                                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        MessageBox.Show($"Мероприятие с ID {selectedId} не найдено в базе данных!",
+                            "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при редактировании: {ex.Message}", "Ошибка",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private int GetSelectedDoingId()
+        {
+            if (dgvEvent.SelectedRows.Count == 0) return -1;
+
+            var selectedRow = dgvEvent.SelectedRows[0];
+
+            if (selectedRow.Tag != null)
+            {
+                return (int)selectedRow.Tag;
+            }
+
+            MessageBox.Show("Tag строки пуст! ID не сохранен.", "Ошибка",
+                MessageBoxButtons.OK, MessageBoxIcon.Error);
+            return -1;
         }
     }
 }
