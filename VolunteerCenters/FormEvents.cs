@@ -10,7 +10,9 @@ namespace VolunteerCenters
         public User CurrentUser { get; private set; }
         public bool IsGuest { get; private set; }
 
-        public FormEvents(User user, bool guest)
+        public bool IsAdmin { get; private set; }
+
+        public FormEvents(User user, bool guest, bool admin)
         {
             InitializeComponent();
 
@@ -24,6 +26,21 @@ namespace VolunteerCenters
 
             LoadEvents();
 
+            SetButtonsVisibility();
+
+        }
+
+        private void SetButtonsVisibility()
+        {
+            bool adminVisible = IsAdmin;
+
+            //if (btnAdd != null) btnAdd.Visible = IsAdmin;
+            //if (btnEdit != null) btnEdit.Visible = IsAdmin;
+            //if (btnDelete != null) btnDelete.Visible = IsAdmin;
+
+            //if (btnAdd != null) btnAdd.Enabled = IsAdmin;
+            //if (btnEdit != null) btnEdit.Enabled = IsAdmin;
+            //if (btnDelete != null) btnDelete.Enabled = IsAdmin;
         }
 
         private void ConfigureDataGridViewColumns()

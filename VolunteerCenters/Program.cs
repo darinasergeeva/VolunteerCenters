@@ -8,32 +8,22 @@ namespace VolunteerCenters
         [STAThread]
         static void Main()
         {
-            bool exitProgram = false;
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
 
-            while (!exitProgram)
+            using (var loginForm = new FormLogin())
             {
-                using (var formLogin = new FormLogin())
+                if (loginForm.ShowDialog() == DialogResult.OK)
                 {
-                    if (formLogin.ShowDialog() == DialogResult.OK)
-                    {
-                        using (var formProducts = new FormEvents(
-                            formLogin.CurrentUser,
-                            formLogin.IsGuest))
-                        {
-                            if (formProducts.ShowDialog() == DialogResult.Cancel)
-                            {
-                                continue;
-                            }
-                            else
-                            {
-                                exitProgram = true;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        exitProgram = true;
-                    }
+                    Application.Run(new FormEvents(
+                        loginForm.CurrentUser,
+                        loginForm.IsGuest,
+                        loginForm.IsAdmin  
+                    ));
+                }
+                else
+                {
+                    Application.Exit();
                 }
             }
         }

@@ -13,6 +13,7 @@ namespace VolunteerCenters
     {
         public Models.User CurrentUser { get; private set; }
         public bool IsGuest { get; private set; }
+        public bool IsAdmin { get; private set; }
         public FormLogin()
         {
             InitializeComponent();
@@ -40,8 +41,13 @@ namespace VolunteerCenters
                     IsGuest = false;
 
 
+                    IsAdmin = (user.Role?.NameRole == "Администратор");
+
+
                     string roleName = user.Role?.NameRole ?? "Роль не загружена";
-                    MessageBox.Show($"Добро пожаловать, {user.FullName}!\nВаша роль: {roleName}",
+                    string adminStatus = IsAdmin ? "(Администратор)" : "";
+
+                    MessageBox.Show($"Добро пожаловать, {user.FullName}!\nВаша роль: {roleName} {adminStatus}",
                         "Успешный вход",
                         MessageBoxButtons.OK,
                         MessageBoxIcon.Information);
