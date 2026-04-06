@@ -185,7 +185,7 @@ namespace VolunteerCenters
                         {
                             if (formEdit.ShowDialog() == DialogResult.OK)
                             {
-                                LoadEvents(); 
+                                LoadEvents();
                                 MessageBox.Show("Данные обновлены!", "Успех",
                                     MessageBoxButtons.OK, MessageBoxIcon.Information);
                             }
@@ -219,6 +219,58 @@ namespace VolunteerCenters
             MessageBox.Show("Tag строки пуст! ID не сохранен.", "Ошибка",
                 MessageBoxButtons.OK, MessageBoxIcon.Error);
             return -1;
+        }
+
+        private void btnDelete_Click(object sender, EventArgs e)
+        {
+            if (dgvEvent.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("Выберите мероприятие для удаления!", "Внимание",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            int selectedId = GetSelectedDoingId();
+            if (selectedId == -1) return;
+
+            // Подтверждение удаления
+            var result = MessageBox.Show("Вы уверены, что хотите удалить это мероприятие?\n" +
+                "Все связанные регистрации также будут удалены!",
+                "Подтверждение удаления",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Warning);
+
+            if (result == DialogResult.Yes)
+            {
+                try
+                {
+                    using (var db = new BdVolunteerCentersContext())
+                    {
+                        // Сначала удаляем связанные регистрации
+                        var registrations = db.VolunteerRegistrations
+                            .Where(vr => vr.IdEvent == selectedId);
+                        db.VolunteerRegistrations.RemoveRange(registrations);
+
+                        // Затем удаляем само мероприятие
+                        var doing = db.Doings.Find(selectedId);
+                        if (doing != null)
+                        {
+                            db.Doings.Remove(doing);
+                            db.SaveChanges();
+
+                            MessageBox.Show("Мероприятие успешно удалено!", "Успех",
+                                MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                            LoadEvents(); // Обновляем таблицу
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Ошибка при удалении: {ex.Message}", "Ошибка",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
         }
     }
 }

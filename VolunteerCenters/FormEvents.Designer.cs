@@ -97,6 +97,7 @@
             btnDelete.TabStop = false;
             btnDelete.Text = "Удалить";
             btnDelete.UseVisualStyleBackColor = false;
+            btnDelete.Click += btnDelete_Click;
             // 
             // lblUserName
             // 
