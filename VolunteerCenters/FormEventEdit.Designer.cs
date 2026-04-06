@@ -176,6 +176,7 @@
             btnSave.TabStop = false;
             btnSave.Text = "Сохранить";
             btnSave.UseVisualStyleBackColor = false;
+            btnSave.Click += btnSave_Click;
             // 
             // btnCancel
             // 
@@ -190,6 +191,7 @@
             btnCancel.TabStop = false;
             btnCancel.Text = "Отмена";
             btnCancel.UseVisualStyleBackColor = false;
+            btnCancel.Click += btnCancel_Click;
             // 
             // FormEventEdit
             // 
@@ -215,7 +217,7 @@
             Controls.Add(lblEvent);
             Font = new Font("Times New Roman", 12F, FontStyle.Regular, GraphicsUnit.Point, 204);
             FormBorderStyle = FormBorderStyle.FixedDialog;
-            Margin = new Padding(4, 4, 4, 4);
+            Margin = new Padding(4);
             MaximizeBox = false;
             MinimizeBox = false;
             Name = "FormEventEdit";

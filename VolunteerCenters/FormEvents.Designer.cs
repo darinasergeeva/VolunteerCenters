@@ -30,6 +30,9 @@
         {
             DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
             panelTop = new Panel();
+            btnAdd = new Button();
+            btnEdit = new Button();
+            btnDelete = new Button();
             lblUserName = new Label();
             btnLogut = new Button();
             dgvEvent = new DataGridView();
@@ -40,6 +43,9 @@
             // panelTop
             // 
             panelTop.BackColor = Color.White;
+            panelTop.Controls.Add(btnAdd);
+            panelTop.Controls.Add(btnEdit);
+            panelTop.Controls.Add(btnDelete);
             panelTop.Controls.Add(lblUserName);
             panelTop.Controls.Add(btnLogut);
             panelTop.Dock = DockStyle.Top;
@@ -47,6 +53,49 @@
             panelTop.Name = "panelTop";
             panelTop.Size = new Size(984, 40);
             panelTop.TabIndex = 0;
+            // 
+            // btnAdd
+            // 
+            btnAdd.BackColor = Color.FromArgb(76, 175, 80);
+            btnAdd.BackgroundImageLayout = ImageLayout.Center;
+            btnAdd.FlatAppearance.BorderSize = 0;
+            btnAdd.FlatStyle = FlatStyle.Flat;
+            btnAdd.Location = new Point(0, 0);
+            btnAdd.Name = "btnAdd";
+            btnAdd.Size = new Size(150, 40);
+            btnAdd.TabIndex = 11;
+            btnAdd.TabStop = false;
+            btnAdd.Text = "Добавить";
+            btnAdd.UseVisualStyleBackColor = false;
+            btnAdd.Click += btnAdd_Click;
+            // 
+            // btnEdit
+            // 
+            btnEdit.BackColor = Color.FromArgb(76, 175, 80);
+            btnEdit.BackgroundImageLayout = ImageLayout.Center;
+            btnEdit.FlatAppearance.BorderSize = 0;
+            btnEdit.FlatStyle = FlatStyle.Flat;
+            btnEdit.Location = new Point(168, 0);
+            btnEdit.Name = "btnEdit";
+            btnEdit.Size = new Size(150, 40);
+            btnEdit.TabIndex = 10;
+            btnEdit.TabStop = false;
+            btnEdit.Text = "Редактировать";
+            btnEdit.UseVisualStyleBackColor = false;
+            // 
+            // btnDelete
+            // 
+            btnDelete.BackColor = Color.FromArgb(76, 175, 80);
+            btnDelete.BackgroundImageLayout = ImageLayout.Center;
+            btnDelete.FlatAppearance.BorderSize = 0;
+            btnDelete.FlatStyle = FlatStyle.Flat;
+            btnDelete.Location = new Point(336, 0);
+            btnDelete.Name = "btnDelete";
+            btnDelete.Size = new Size(150, 40);
+            btnDelete.TabIndex = 9;
+            btnDelete.TabStop = false;
+            btnDelete.Text = "Удалить";
+            btnDelete.UseVisualStyleBackColor = false;
             // 
             // lblUserName
             // 
@@ -124,5 +173,8 @@
         private Label lblUserName;
         private Button btnLogut;
         private DataGridView dgvEvent;
+        private Button btnAdd;
+        private Button btnEdit;
+        private Button btnDelete;
     }
 }

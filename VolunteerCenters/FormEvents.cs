@@ -133,5 +133,16 @@ namespace VolunteerCenters
             this.DialogResult = DialogResult.Cancel;
             this.Close();
         }
+
+        private void btnAdd_Click(object sender, EventArgs e)
+        {
+            using (var formEdit = new FormEventEdit())
+            {
+                if (formEdit.ShowDialog() == DialogResult.OK)
+                {
+                    LoadEvents(); 
+                }
+            }
+        }
     }
 }
