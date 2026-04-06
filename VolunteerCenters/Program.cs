@@ -2,9 +2,6 @@ namespace VolunteerCenters
 {
     internal static class Program
     {
-        /// <summary>
-        ///  The main entry point for the application.
-        /// </summary>
         [STAThread]
         static void Main()
         {
@@ -18,7 +15,7 @@ namespace VolunteerCenters
                     Application.Run(new FormEvents(
                         loginForm.CurrentUser,
                         loginForm.IsGuest,
-                        loginForm.IsAdmin  
+                        loginForm.IsAdmin
                     ));
                 }
                 else

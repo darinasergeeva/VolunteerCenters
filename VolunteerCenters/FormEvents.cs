@@ -6,10 +6,8 @@ namespace VolunteerCenters
 {
     public partial class FormEvents : Form
     {
-
         public User CurrentUser { get; private set; }
         public bool IsGuest { get; private set; }
-
         public bool IsAdmin { get; private set; }
 
         public FormEvents(User user, bool guest, bool admin)
@@ -18,29 +16,21 @@ namespace VolunteerCenters
 
             CurrentUser = user;
             IsGuest = guest;
+            IsAdmin = admin;
 
             lblUserName.Text = IsGuest ? "Гость" : CurrentUser.FullName;
-            this.Text = "Список мероприятий";
+            this.Text = IsAdmin ? "Список мероприятий (Администратор)" : "Список мероприятий";
 
             ConfigureDataGridViewColumns();
-
             LoadEvents();
-
             SetButtonsVisibility();
-
         }
 
         private void SetButtonsVisibility()
         {
-            bool adminVisible = IsAdmin;
-
-            //if (btnAdd != null) btnAdd.Visible = IsAdmin;
-            //if (btnEdit != null) btnEdit.Visible = IsAdmin;
-            //if (btnDelete != null) btnDelete.Visible = IsAdmin;
-
-            //if (btnAdd != null) btnAdd.Enabled = IsAdmin;
-            //if (btnEdit != null) btnEdit.Enabled = IsAdmin;
-            //if (btnDelete != null) btnDelete.Enabled = IsAdmin;
+            if (btnAdd != null) btnAdd.Visible = IsAdmin;
+            if (btnEdit != null) btnEdit.Visible = IsAdmin;
+            if (btnDelete != null) btnDelete.Visible = IsAdmin;
         }
 
         private void ConfigureDataGridViewColumns()
@@ -65,13 +55,13 @@ namespace VolunteerCenters
             dgvEvent.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dgvEvent.MultiSelect = false;
         }
+
         private void LoadEvents()
         {
             try
             {
                 using (var db = new BdVolunteerCentersContext())
                 {
-                    // Загрузка мероприятий со связанными данными
                     var doings = db.Doings
                         .Include(d => d.Event)
                         .Include(d => d.Category)
@@ -147,6 +137,13 @@ namespace VolunteerCenters
             }
         }
 
+        private int GetSelectedDoingId()
+        {
+            if (dgvEvent.SelectedRows.Count == 0) return -1;
+            var selectedRow = dgvEvent.SelectedRows[0];
+            return selectedRow.Tag != null ? (int)selectedRow.Tag : -1;
+        }
+
         private void btnLogut_Click(object sender, EventArgs e)
         {
             this.DialogResult = DialogResult.Cancel;
@@ -166,7 +163,6 @@ namespace VolunteerCenters
 
         private void btnEdit_Click(object sender, EventArgs e)
         {
-            // Проверка, что выбран хотя бы один ряд
             if (dgvEvent.SelectedRows.Count == 0)
             {
                 MessageBox.Show("Выберите мероприятие для редактирования!", "Внимание",
@@ -174,14 +170,11 @@ namespace VolunteerCenters
                 return;
             }
 
-            // Получаем ID выбранного мероприятия
             int selectedId = GetSelectedDoingId();
-
             if (selectedId == -1)
             {
-                MessageBox.Show("Не удалось определить ID мероприятия!\n" +
-                    "Проверьте, что колонка colId существует и содержит данные.",
-                    "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Не удалось определить ID мероприятия!", "Ошибка",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
@@ -222,22 +215,6 @@ namespace VolunteerCenters
             }
         }
 
-        private int GetSelectedDoingId()
-        {
-            if (dgvEvent.SelectedRows.Count == 0) return -1;
-
-            var selectedRow = dgvEvent.SelectedRows[0];
-
-            if (selectedRow.Tag != null)
-            {
-                return (int)selectedRow.Tag;
-            }
-
-            MessageBox.Show("Tag строки пуст! ID не сохранен.", "Ошибка",
-                MessageBoxButtons.OK, MessageBoxIcon.Error);
-            return -1;
-        }
-
         private void btnDelete_Click(object sender, EventArgs e)
         {
             if (dgvEvent.SelectedRows.Count == 0)
@@ -250,7 +227,6 @@ namespace VolunteerCenters
             int selectedId = GetSelectedDoingId();
             if (selectedId == -1) return;
 
-            // Подтверждение удаления
             var result = MessageBox.Show("Вы уверены, что хотите удалить это мероприятие?\n" +
                 "Все связанные регистрации также будут удалены!",
                 "Подтверждение удаления",
@@ -263,22 +239,18 @@ namespace VolunteerCenters
                 {
                     using (var db = new BdVolunteerCentersContext())
                     {
-                        // Сначала удаляем связанные регистрации
                         var registrations = db.VolunteerRegistrations
                             .Where(vr => vr.IdEvent == selectedId);
                         db.VolunteerRegistrations.RemoveRange(registrations);
 
-                        // Затем удаляем само мероприятие
                         var doing = db.Doings.Find(selectedId);
                         if (doing != null)
                         {
                             db.Doings.Remove(doing);
                             db.SaveChanges();
-
                             MessageBox.Show("Мероприятие успешно удалено!", "Успех",
                                 MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-                            LoadEvents(); // Обновляем таблицу
+                            LoadEvents();
                         }
                     }
                 }
